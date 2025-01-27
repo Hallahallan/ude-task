@@ -1,0 +1,15 @@
+C:\Users\martin.hallan\Documents\ude\bin\Debug\net9.0\ude.exe
+C:\Users\martin.hallan\Documents\ude\bin\Debug\net9.0\ude.deps.json
+C:\Users\martin.hallan\Documents\ude\bin\Debug\net9.0\ude.runtimeconfig.json
+C:\Users\martin.hallan\Documents\ude\bin\Debug\net9.0\ude.dll
+C:\Users\martin.hallan\Documents\ude\bin\Debug\net9.0\ude.pdb
+C:\Users\martin.hallan\Documents\ude\obj\Debug\net9.0\ude.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\martin.hallan\Documents\ude\obj\Debug\net9.0\ude.AssemblyInfoInputs.cache
+C:\Users\martin.hallan\Documents\ude\obj\Debug\net9.0\ude.AssemblyInfo.cs
+C:\Users\martin.hallan\Documents\ude\obj\Debug\net9.0\ude.csproj.CoreCompileInputs.cache
+C:\Users\martin.hallan\Documents\ude\obj\Debug\net9.0\ude.sourcelink.json
+C:\Users\martin.hallan\Documents\ude\obj\Debug\net9.0\ude.dll
+C:\Users\martin.hallan\Documents\ude\obj\Debug\net9.0\refint\ude.dll
+C:\Users\martin.hallan\Documents\ude\obj\Debug\net9.0\ude.pdb
+C:\Users\martin.hallan\Documents\ude\obj\Debug\net9.0\ude.genruntimeconfig.cache
+C:\Users\martin.hallan\Documents\ude\obj\Debug\net9.0\ref\ude.dll

@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SendGrid;
-using EmailService.Services;
-using EmailService.BackgroundServices;
+using Microsoft.Extensions.Logging;
+using DotNetEnv;
 
-namespace EmailNotificationService
+namespace YourNamespace
 {
     public class Program
     {
@@ -36,6 +35,24 @@ namespace EmailNotificationService
                         services.AddSingleton(emailConfig);
                         services.AddSingleton<EmailService>();
                         services.AddHostedService<EmailBackgroundService>();
+                    })
+                    .Build();
+
+                await host.RunAsync();
+            }
+
+            if (args.Length > 0 && args[0] == "fakemail")
+            {       
+                var host = Host.CreateDefaultBuilder(args)
+                    .ConfigureServices((hostContext, services) =>
+                    {
+                        services.AddSingleton<DevelopmentEmailService>();
+                        services.AddHostedService<FakeEmailBackgroundService>();
+                    })
+                    .ConfigureLogging(logging =>
+                    {
+                        logging.ClearProviders();
+                        logging.AddConsole();
                     })
                     .Build();
 

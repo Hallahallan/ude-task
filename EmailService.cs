@@ -7,7 +7,7 @@ using System.Net.Mail;
 using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EmailNotificationService
+namespace YourNamespace
 {
     // Email configuration class to store settings
     public class EmailConfig

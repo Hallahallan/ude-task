@@ -1,4 +1,4 @@
-namespace TwoSumProject
+namespace YourNamespace
 {
     public class Solution 
     {

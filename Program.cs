@@ -1,30 +1,46 @@
-﻿namespace TwoSumProject
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using SendGrid;
+using EmailService.Services;
+using EmailService.BackgroundServices;
+
+namespace EmailNotificationService
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            Solution solution = new Solution();
-            
-            // Test case
-            int[] numbers = new int[] { 2, 7, 11, 15 };
-            int target = 9;
-            
-            int[] result = solution.TwoSum(numbers, target);
-            
-            Console.WriteLine($"Input Array: [{string.Join(", ", numbers)}]");
-            Console.WriteLine($"Target Sum: {target}");
-            Console.WriteLine($"Indices: [{string.Join(", ", result)}]");
+            if (args.Length > 0 && args[0] == "twosum")
+            {
+                var twoSumDemo = new TwoSumDemo();
+                twoSumDemo.RunTwoSumDemo();
+                return;
+            }
 
-            //Test case 2
-            int[] fibo = new int[] { 1, 2, 3, 5, 8, 13, 21 };
-            int target_fibo = 34;
+            if (args.Length > 0 && args[0] == "email")
+            {
+                Env.Load();
 
-            int[] result_fibo = solution.TwoSum(fibo, target_fibo);
-            
-            Console.WriteLine($"Input Array: [{string.Join(", ", fibo)}]");
-            Console.WriteLine($"Target Sum: {target_fibo}");
-            Console.WriteLine($"Indices: [{string.Join(", ", result_fibo)}]");
+                var host = Host.CreateDefaultBuilder(args)
+                    .ConfigureServices((hostContext, services) =>
+                    {
+                        // Create email config from environment variables
+                        var emailConfig = new EmailConfig
+                        {
+                            SmtpServer = Environment.GetEnvironmentVariable("EMAIL_SMTP_SERVER"),
+                            Port = int.Parse(Environment.GetEnvironmentVariable("EMAIL_PORT") ?? "587"),
+                            Username = Environment.GetEnvironmentVariable("EMAIL_USERNAME"),
+                            Password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD")
+                        };
+                        
+                        services.AddSingleton(emailConfig);
+                        services.AddSingleton<EmailService>();
+                        services.AddHostedService<EmailBackgroundService>();
+                    })
+                    .Build();
+
+                await host.RunAsync();
+            }
         }
     }
 }

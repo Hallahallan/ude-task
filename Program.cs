@@ -7,57 +7,85 @@ namespace YourNamespace
 {
     public class Program
     {
+        private static readonly TwoSumDemo _twoSumDemo = new TwoSumDemo();
+
         public static async Task Main(string[] args)
         {
-            if (args.Length > 0 && args[0] == "twosum")
+            if (args.Length == 0)
             {
-                var twoSumDemo = new TwoSumDemo();
-                twoSumDemo.RunTwoSumDemo();
+                Console.WriteLine("Specify a command: twosum-basic, twosum-fibo, twosum-all, email, or fakemail");
                 return;
             }
 
-            if (args.Length > 0 && args[0] == "email")
+            switch (args[0].ToLower())
             {
-                Env.Load();
+                case "twosum-basic":
+                    _twoSumDemo.RunBasicTest();
+                    break;
 
-                var host = Host.CreateDefaultBuilder(args)
-                    .ConfigureServices((hostContext, services) =>
-                    {
-                        // Create email config from environment variables
-                        var emailConfig = new EmailConfig
-                        {
-                            SmtpServer = Environment.GetEnvironmentVariable("EMAIL_SMTP_SERVER"),
-                            Port = int.Parse(Environment.GetEnvironmentVariable("EMAIL_PORT") ?? "587"),
-                            Username = Environment.GetEnvironmentVariable("EMAIL_USERNAME"),
-                            Password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD")
-                        };
-                        
-                        services.AddSingleton(emailConfig);
-                        services.AddSingleton<EmailService>();
-                        services.AddHostedService<EmailBackgroundService>();
-                    })
-                    .Build();
+                case "twosum-fibo":
+                    _twoSumDemo.RunFibonacciTest();
+                    break;
 
-                await host.RunAsync();
+                case "twosum-all":
+                    _twoSumDemo.RunAllTests();
+                    break;
+
+                case "email":
+                    await RunEmailService(args);
+                    break;
+
+                case "fakemail":
+                    await RunFakeEmailService(args);
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid command. Available commands: twosum-basic, twosum-fibo, twosum-all, email, or fakemail");
+                    break;
             }
+        }
 
-            if (args.Length > 0 && args[0] == "fakemail")
-            {       
-                var host = Host.CreateDefaultBuilder(args)
-                    .ConfigureServices((hostContext, services) =>
-                    {
-                        services.AddSingleton<DevelopmentEmailService>();
-                        services.AddHostedService<FakeEmailBackgroundService>();
-                    })
-                    .ConfigureLogging(logging =>
-                    {
-                        logging.ClearProviders();
-                        logging.AddConsole();
-                    })
-                    .Build();
+        private static async Task RunEmailService(string[] args)
+        {
+            Env.Load();
 
-                await host.RunAsync();
-            }
+            var host = Host.CreateDefaultBuilder(args)
+                .ConfigureServices((hostContext, services) =>
+                {
+                    // Create email config from environment variables
+                    var emailConfig = new EmailConfig
+                    {
+                        SmtpServer = Environment.GetEnvironmentVariable("EMAIL_SMTP_SERVER"),
+                        Port = int.Parse(Environment.GetEnvironmentVariable("EMAIL_PORT") ?? "587"),
+                        Username = Environment.GetEnvironmentVariable("EMAIL_USERNAME"),
+                        Password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD")
+                    };
+                    
+                    services.AddSingleton(emailConfig);
+                    services.AddSingleton<EmailService>();
+                    services.AddHostedService<EmailBackgroundService>();
+                })
+                .Build();
+
+            await host.RunAsync();
+        }
+
+        private static async Task RunFakeEmailService(string[] args)
+        {
+            var host = Host.CreateDefaultBuilder(args)
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.AddSingleton<DevelopmentEmailService>();
+                    services.AddHostedService<FakeEmailBackgroundService>();
+                })
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                })
+                .Build();
+
+            await host.RunAsync();
         }
     }
 }

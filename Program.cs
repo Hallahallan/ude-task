@@ -72,10 +72,20 @@ namespace YourNamespace
 
         private static async Task RunFakeEmailService(string[] args)
         {
+            Env.Load();
+
             var host = Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddSingleton<DevelopmentEmailService>();
+                    // Use env variablie emails
+                    var fakeEmailConfig = new FakeEmailConfig
+                    {
+                        Username = Environment.GetEnvironmentVariable("EMAIL_USERNAME") ?? "default@example.com",
+                        RecipientEmail = Environment.GetEnvironmentVariable("EMAIL_RECIPIENT") ?? "test@example.com"
+                    };
+
+                    services.AddSingleton(fakeEmailConfig);
+                    services.AddSingleton<FakeEmailService>();
                     services.AddHostedService<FakeEmailBackgroundService>();
                 })
                 .ConfigureLogging(logging =>

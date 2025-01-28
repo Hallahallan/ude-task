@@ -6,20 +6,29 @@ using System.Threading.Tasks;
 
 namespace YourNamespace
 {
-    public class DevelopmentEmailService
+    public class FakeEmailConfig
     {
-        private readonly ILogger<DevelopmentEmailService> _logger;
+        public string Username { get; set; }
+        public string RecipientEmail { get; set; }
+    }
 
-        public DevelopmentEmailService(ILogger<DevelopmentEmailService> logger)
+    public class FakeEmailService
+    {
+        private readonly ILogger<FakeEmailService> _logger;
+        private readonly FakeEmailConfig _config;
+
+        public FakeEmailService(ILogger<FakeEmailService> logger, FakeEmailConfig config)
         {
             _logger = logger;
+            _config = config;
         }
 
         public Task SendEmailAsync(string to, string subject, string message)
         {
             // Log the email instead of actually sending it
             _logger.LogInformation(
-                "Development Email:\n" +
+                "Fake Email:\n" +
+                $"From: {_config.Username}\n" +
                 $"To: {to}\n" +
                 $"Subject: {subject}\n" +
                 $"Message: {message}\n" +
@@ -32,13 +41,17 @@ namespace YourNamespace
 
     public class FakeEmailBackgroundService : BackgroundService
     {
-        private readonly DevelopmentEmailService _emailService;
+        private readonly FakeEmailService _emailService;
         private readonly ILogger<FakeEmailBackgroundService> _logger;
+        private readonly FakeEmailConfig _config;
 
-        public FakeEmailBackgroundService(DevelopmentEmailService emailService, ILogger<FakeEmailBackgroundService> logger)
+        public FakeEmailBackgroundService(FakeEmailService emailService, 
+            ILogger<FakeEmailBackgroundService> logger,
+            FakeEmailConfig config)
         {
             _emailService = emailService;
             _logger = logger;
+            _config = config;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -47,9 +60,9 @@ namespace YourNamespace
             {
                 try
                 {
-                    // Send a test email every minute
+                    // Send a test email every minute using config values
                     await _emailService.SendEmailAsync(
-                        "test@example.com",
+                        _config.RecipientEmail,
                         "Test Notification",
                         $"This is a test notification sent at {DateTime.Now}"
                     );
